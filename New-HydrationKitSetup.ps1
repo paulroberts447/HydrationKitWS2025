@@ -25,7 +25,7 @@
 
 
     .EXAMPLE
-   .\New-HydrationKitSetup.ps1 -Path C:\CMLab -ShareName CMLab
+   .\New-HydrationKitSetup.ps1 -Path D:\CMLab -ShareName CMLab
 #>
 
 #Requires -RunAsAdministrator

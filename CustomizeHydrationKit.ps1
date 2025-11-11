@@ -34,51 +34,51 @@
 #Requires -Version 3
 
 #Set the path to the created deploymentshare
-$HydrationSource = "D:\CMLab"
+$HydrationSource = "D:\CMLab\Build"
 
 #Change Domain and OU structure, these values will be changed in all files where applicable
-$NewDomainName = "corp.mydomain.org" #Default = corp.viamonstra.com
-$NewDomainRoot = "dc=corp,dc=mydomain,dc=org"
-$NewMachineOU = "ou=Servers,ou=MyDomain,dc=corp,dc=mydomain,dc=org" #Default = ou=Servers,ou=ViaMonstra,dc=corp,dc=viamonstra,dc=com
-$NewOrgName = "MyDomain" #Default = ViaMonstra or VIAMONSTRA
-$NewTimeZoneName = "W. Europe Standard Time" #Default = Pacific Standard Time
+$NewDomainName = "lab.com"
+$NewDomainRoot = "dc=lab,dc=com"
+$NewMachineOU = "dc=lab,dc=com"
+$NewOrgName = "lab"
+$NewTimeZoneName = "AUS Eastern Standard Time" #Default = Pacific Standard Time
 
 #Change Admin Passwd
 # $NewPasswd = "newpass" #Default = P@ssw0rd
 
 #General IP settings, used in all files where applicable, default for all these are on the 192.168.25.x net
-$NewOSDAdapter0DNSServerList = "10.10.5.200" #Also used for DC01 ip-adress
-$newOSDAdapter0Gateways= "10.10.5.1"
+$NewOSDAdapter0DNSServerList = "192.168.1.20" #Also used for DC01 ip-adress
+$newOSDAdapter0Gateways= "192.168.1.254"
 $NewOSDAdapter0SubnetMask= "255.255.255.0"
-$NewADSubNet = "10.10.5.0"
+$NewADSubNet = "192.168.1.0"
 
 #DC01 - set DHCP scope on DC01
-$NewDHCPScopes0StartIP="10.10.5.100"
-$NewDHCPScopes0EndIP="10.10.5.199"
+$NewDHCPScopes0StartIP="192.168.1.100"
+$NewDHCPScopes0EndIP="192.168.1.199"
 
 #Set IP-adress for CM01
-$NewCM01OSDAdapter0IPAddressList= "10.10.5.214"
+$NewCM01OSDAdapter0IPAddressList= "192.168.1.214"
 
 #Set IP-adress for DP01
-$NewDP01OSDAdapter0IPAddressList= "10.10.5.245"
+$NewDP01OSDAdapter0IPAddressList= "192.168.1.245"
 
 #Set IP-adress for MDT01
-$NewMDT01OSDAdapter0IPAddressList= "10.10.5.210"
+$NewMDT01OSDAdapter0IPAddressList= "192.168.1.210"
 
 #Set IP-adress for FS01
-$NewFS01OSDAdapter0IPAddressList= "10.10.5.213"
+$NewFS01OSDAdapter0IPAddressList= "192.168.1.213"
 
 #Set IP-adress for PC0001
-$NewPC0001OSDAdapter0IPAddressList= "10.10.5.11"
+$NewPC0001OSDAdapter0IPAddressList= "192.168.1.11"
 
 #Set IP-adress for PC0002
-$NewPC0002OSDAdapter0IPAddressList= "10.10.5.12"
+$NewPC0002OSDAdapter0IPAddressList= "192.168.1.12"
 
 #Set IP-adress for PC0003
-$NewPC0003OSDAdapter0IPAddressList= "10.10.5.13"
+$NewPC0003OSDAdapter0IPAddressList= "192.168.1.13"
 
 #Set IP-adress for PC0004
-$NewPC0004OSDAdapter0IPAddressList= "10.10.5.14"
+$NewPC0004OSDAdapter0IPAddressList= "192.168.1.14"
 
 
 #------------------ Do Not change below this line-----------------#
@@ -218,22 +218,21 @@ If($NewADSubNet){Update-HKContent -fileName "$($HydrationSource)\ISO\Content\Dep
 
 $sourceFiles = Get-ChildItem -recurse -Path "$HydrationSource\ISO" -Include ("*.ini","*.ps1","*.vbs","*.wsf","*.xml","*.csv")
 $sourceFiles += Get-ChildItem -recurse -Path "$HydrationSource\DS" -Include ("*.ini","*.ps1","*.vbs","*.wsf","*.xml","*.csv")
-# $sourceFiles | Select-String -Pattern 'VIAMONSTRA'
 
 #Update Domain Name
-If($NewMachineOU) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'ou=Servers,ou=ViaMonstra,dc=corp,dc=viamonstra,dc=com' -NewValue $NewMachineOU }
+If($NewMachineOU) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'ou=Servers,ou=LAB,dc=lab,dc=com' -NewValue $NewMachineOU }
 
 #Update Domain Name
-If($NewDomainName) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'corp.viamonstra.com' -NewValue $NewDomainName }
+If($NewDomainName) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'lab.com' -NewValue $NewDomainName }
 
 #Update Domain Root
-If($NewDomainRoot) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'dc=corp,dc=viamonstra,dc=com' -NewValue $NewDomainRoot }
-If($NewDomainRoot) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'DC=corp,DC=viamonstra,DC=com' -NewValue $NewDomainRoot }
+If($NewDomainRoot) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'dc=lab,dc=com' -NewValue $NewDomainRoot }
+If($NewDomainRoot) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'dc=lab,DC=com' -NewValue $NewDomainRoot }
 
 #Update ORGName
 If($NewOrgName) { 
-    Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'ViaMonstra' -NewValue $NewOrgName
-    Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'VIAMONSTRA' -NewValue $NewOrgName -ToUpper
+    Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'LAB' -NewValue $NewOrgName
+    Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'LAB' -NewValue $NewOrgName -ToUpper
 }
 
 #Update password
