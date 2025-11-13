@@ -39,15 +39,15 @@ $HydrationSource = "D:\CMLab\Build"
 #Change Domain and OU structure, these values will be changed in all files where applicable
 $NewDomainName = "lab.com"
 $NewDomainRoot = "dc=lab,dc=com"
-$NewMachineOU = "dc=lab,dc=com"
-$NewOrgName = "lab"
-$NewTimeZoneName = "AUS Eastern Standard Time" #Default = Pacific Standard Time
+$NewMachineOU = "ou=Servers,ou=LAB,dc=dc=lab,dc=com"
+$NewOrgName = "LAB"
+$NewTimeZoneName = "AUS Eastern Standard Time"
 
 #Change Admin Passwd
 # $NewPasswd = "newpass" #Default = P@ssw0rd
 
 #General IP settings, used in all files where applicable, default for all these are on the 192.168.25.x net
-$NewOSDAdapter0DNSServerList = "192.168.1.20" #Also used for DC01 ip-adress
+$NewOSDAdapter0DNSServerList = "192.168.1.20,192.168.1.21" #Also used for DC01 ip-adress
 $newOSDAdapter0Gateways= "192.168.1.254"
 $NewOSDAdapter0SubnetMask= "255.255.255.0"
 $NewADSubNet = "192.168.1.0"
@@ -218,21 +218,22 @@ If($NewADSubNet){Update-HKContent -fileName "$($HydrationSource)\ISO\Content\Dep
 
 $sourceFiles = Get-ChildItem -recurse -Path "$HydrationSource\ISO" -Include ("*.ini","*.ps1","*.vbs","*.wsf","*.xml","*.csv")
 $sourceFiles += Get-ChildItem -recurse -Path "$HydrationSource\DS" -Include ("*.ini","*.ps1","*.vbs","*.wsf","*.xml","*.csv")
+# $sourceFiles | Select-String -Pattern 'VIAMONSTRA'
 
 #Update Domain Name
-If($NewMachineOU) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'ou=Servers,ou=LAB,dc=lab,dc=com' -NewValue $NewMachineOU }
+If($NewMachineOU) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'ou=Servers,ou=ViaMonstra,dc=corp,dc=viamonstra,dc=com' -NewValue $NewMachineOU }
 
 #Update Domain Name
-If($NewDomainName) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'lab.com' -NewValue $NewDomainName }
+If($NewDomainName) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'corp.viamonstra.com' -NewValue $NewDomainName }
 
 #Update Domain Root
-If($NewDomainRoot) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'dc=lab,dc=com' -NewValue $NewDomainRoot }
-If($NewDomainRoot) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'dc=lab,DC=com' -NewValue $NewDomainRoot }
+If($NewDomainRoot) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'dc=corp,dc=viamonstra,dc=com' -NewValue $NewDomainRoot }
+If($NewDomainRoot) { Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'DC=corp,DC=viamonstra,DC=com' -NewValue $NewDomainRoot }
 
 #Update ORGName
 If($NewOrgName) { 
-    Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'LAB' -NewValue $NewOrgName
-    Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'LAB' -NewValue $NewOrgName -ToUpper
+    Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'ViaMonstra' -NewValue $NewOrgName
+    Update-HKContentRecurse -SourceFiles $sourceFiles -pattern 'VIAMONSTRA' -NewValue $NewOrgName -ToUpper
 }
 
 #Update password
